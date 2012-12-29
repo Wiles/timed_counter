@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">Timed Counter</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Timed Counter</string>
+    <string name="zero">0</string>
+    <string name="increment">+</string>
+    <string name="increment_hint">Increments the counter by one</string>
+    <string name="Counter">Counter</string>
+
+</resources>
