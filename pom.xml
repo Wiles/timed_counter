@@ -8,11 +8,22 @@
   <name>Timed Counter</name>
   <dependencies>
 		<dependency>
-			<groupId>android</groupId>
+			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>2.2_r3</version>
+			<version>4.0.1.2</version>
 			<scope>provided</scope>
 		</dependency>
+    <dependency>
+      <groupId>com.googlecode.androidannotations</groupId>
+      <artifactId>androidannotations</artifactId>
+      <version>2.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.androidannotations</groupId>
+      <artifactId>androidannotations-api</artifactId>
+      <version>2.7</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
@@ -33,8 +44,16 @@
         <artifactId>android-maven-plugin</artifactId>
         <configuration>
           <sdk>
-            <platform>10</platform>
+            <platform>14</platform>
           </sdk>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
     </plugins>
