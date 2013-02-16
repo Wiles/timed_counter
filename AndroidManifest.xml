@@ -12,15 +12,19 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.Holo">
         <activity
-            android:name="ca.samuellewis.timedcounter.MainActivity_"
-            android:label="@string/app_name" >
+            android:name="ca.samuellewis.timedcounter.activities.MainActivity_"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="ca.samuellewis.timedcounter.activities.ResultsActivity_"
+            android:label="@string/title_activity_results" >
         </activity>
     </application>
 
