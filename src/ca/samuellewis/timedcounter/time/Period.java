@@ -16,6 +16,13 @@ public class Period {
 		this.seconds = seconds % 60;
 	}
 
+	public Period(final long millis) {
+		this.millis = (int) (millis % 1000);
+		this.seconds = (int) (millis / 1000 % 60);
+		this.minutes = (int) (millis / 60000 % 60);
+		this.hours = (int) (millis / 3600000);
+	}
+
 	public boolean isZero() {
 		return hours == 0 && minutes == 0 && seconds == 0 && millis == 0;
 	}

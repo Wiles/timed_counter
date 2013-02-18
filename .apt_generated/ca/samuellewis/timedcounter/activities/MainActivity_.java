@@ -10,16 +10,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import ca.samuellewis.timedcounter.R.id;
 import ca.samuellewis.timedcounter.R.layout;
+import ca.samuellewis.timedcounter.config.Preferences_;
 import ca.samuellewis.timedcounter.time.Period;
 
 public final class MainActivity_
@@ -36,13 +40,15 @@ public final class MainActivity_
     }
 
     private void init_(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        preferences = new Preferences_(this);
+        vibrator = ((Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE));
     }
 
     private void afterSetContentView_() {
-        txt_count = ((TextView) findViewById(id.txt_count));
         np_hours = ((NumberPicker) findViewById(id.np_hours));
         np_seconds = ((NumberPicker) findViewById(id.np_seconds));
+        txt_count = ((TextView) findViewById(id.txt_count));
+        txt_count_background = ((TextView) findViewById(id.txt_count_background));
         np_minutes = ((NumberPicker) findViewById(id.np_minutes));
         {
             View view = findViewById(id.btnPlus);
@@ -101,6 +107,26 @@ public final class MainActivity_
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(ca.samuellewis.timedcounter.R.menu.activity_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean handled = super.onOptionsItemSelected(item);
+        if (handled) {
+            return true;
+        }
+        int itemId_ = item.getItemId();
+        if (itemId_ == id.menuHistory) {
+            return menuHistory();
+        }
+        return false;
+    }
+
+    @Override
     public void updateCount(final long count) {
         handler_.post(new Runnable() {
 
@@ -119,14 +145,14 @@ public final class MainActivity_
     }
 
     @Override
-    public void stop() {
+    public void showResults() {
         handler_.post(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    MainActivity_.super.stop();
+                    MainActivity_.super.showResults();
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -145,6 +171,24 @@ public final class MainActivity_
             public void run() {
                 try {
                     MainActivity_.super.updateDisplay(period);
+                } catch (RuntimeException e) {
+                    Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void stop() {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    MainActivity_.super.stop();
                 } catch (RuntimeException e) {
                     Log.e("MainActivity_", "A runtime exception was thrown while executing code in a runnable", e);
                 }

@@ -8,14 +8,17 @@
         android:minSdkVersion="17"
         android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.VIBRATE" >
+    </uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo">
+        android:theme="@android:style/Theme.Holo" >
         <activity
             android:name="ca.samuellewis.timedcounter.activities.MainActivity_"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,6 +28,18 @@
         <activity
             android:name="ca.samuellewis.timedcounter.activities.ResultsActivity_"
             android:label="@string/title_activity_results" >
+        </activity>
+        <activity
+            android:name="ca.samuellewis.timedcounter.activities.HistoryListActivity"
+            android:label="@string/title_history_list" >
+        </activity>
+        <activity
+            android:name="ca.samuellewis.timedcounter.activities.HistoryDetailActivity"
+            android:label="@string/title_history_detail"
+            android:parentActivityName=".HistoryListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HistoryListActivity" />
         </activity>
     </application>
 

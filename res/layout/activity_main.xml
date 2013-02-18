@@ -4,41 +4,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <NumberPicker
-        android:id="@+id/np_minutes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/np_minutes"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/np_minutes"
-    	android:gravity="center"
+        android:layout_toRightOf="@+id/np_hours"
+        android:gravity="center"
         android:text="@string/time_separator"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/TextView01"
-    	android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/np_minutes"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/np_minutes"
+        android:gravity="center"
         android:text="@string/time_separator"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <NumberPicker
-        android:id="@+id/np_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/textView1" />
 
     <NumberPicker
         android:id="@+id/np_seconds"
@@ -57,22 +43,57 @@
         android:layout_below="@+id/txt_count"
         android:text="@string/ince" />
 
-    <Button
-        android:id="@+id/btnReset"
+    <TextView
+        android:id="@+id/txt_count_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/np_hours"
-        android:text="@string/restart" />
+        android:text="@string/eights"
+        android:gravity="center"
+        android:textColor="#606060"
+        android:fontFamily="courier new"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="72sp" />
 
     <TextView
         android:id="@+id/txt_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btnReset"
-        android:text="@string/zero"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/np_hours"
+        android:text="@string/padded_zero"
+        android:gravity="center"
+        android:background="#00000000"
+        android:fontFamily="courier new"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="72sp" />
+
+    <NumberPicker
+        android:id="@+id/np_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <NumberPicker
+        android:id="@+id/np_minutes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/textView1" />
+
+    <Button
+        android:id="@+id/btnReset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/np_seconds"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/np_seconds"
+        android:text="@string/restart" />
 
 </RelativeLayout>	

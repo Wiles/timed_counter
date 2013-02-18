@@ -1,33 +1,46 @@
 package ca.samuellewis.timedcounter.activities;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.joda.time.DateTime;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Vibrator;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import ca.samuellewis.timedcounter.R;
+import ca.samuellewis.timedcounter.config.Preferences_;
+import ca.samuellewis.timedcounter.db.DatabaseHelper;
+import ca.samuellewis.timedcounter.results.Session;
 import ca.samuellewis.timedcounter.time.Period;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.LongClick;
-import com.googlecode.androidannotations.annotations.NoTitle;
+import com.googlecode.androidannotations.annotations.OptionsItem;
+import com.googlecode.androidannotations.annotations.OptionsMenu;
+import com.googlecode.androidannotations.annotations.SystemService;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
+import com.googlecode.androidannotations.annotations.sharedpreferences.Pref;
 
-@NoTitle
+@OptionsMenu(R.menu.activity_main)
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
 
-	// TODO ensure ArrayList orders by insertion
-	private List<Long> counts = new ArrayList<Long>();
+	@Pref
+	Preferences_ preferences;
+
+	DatabaseHelper dbHelper;
 
 	private boolean running = false;
 
@@ -35,7 +48,7 @@ public class MainActivity extends Activity {
 
 	private Period period;
 
-	private Period fullPeriod;
+	private Session session;
 
 	@ViewById
 	NumberPicker np_hours;
@@ -49,7 +62,15 @@ public class MainActivity extends Activity {
 	@ViewById
 	TextView txt_count;
 
+	@ViewById
+	TextView txt_count_background;
+
+	@SystemService
+	Vibrator vibrator;
+
 	private UncaughtExceptionHandler originalUEH;
+
+	Typeface face;
 
 	@AfterViews
 	void initMainActivity() {
@@ -67,15 +88,24 @@ public class MainActivity extends Activity {
 		Thread.currentThread().setUncaughtExceptionHandler(
 				Thread.getDefaultUncaughtExceptionHandler());
 
+		dbHelper = new DatabaseHelper(this);
+
 		np_hours.setMinValue(0);
 		np_hours.setMaxValue(99);
 
 		np_minutes.setMinValue(0);
 		np_minutes.setMaxValue(59);
-		np_minutes.setValue(5);
 
 		np_seconds.setMinValue(0);
 		np_seconds.setMaxValue(59);
+
+		face = Typeface.createFromAsset(getAssets(),
+				"fonts/digital_segment_thin.ttf");
+
+		txt_count.setTypeface(face);
+		txt_count_background.setTypeface(face);
+
+		updateDisplay(new Period(preferences.period().get()));
 	}
 
 	@Click
@@ -83,16 +113,27 @@ public class MainActivity extends Activity {
 		if (!running) {
 			start();
 		}
-		counts.add(new Date().getTime());
-		updateCount(counts.size());
+		if (running) {
+			if (session.size() < 100000) {
+				session.addValue(new Date().getTime());
+				updateCount(session.size());
+			}
+			vibrator.vibrate(10);
+		}
+	}
+
+	@OptionsItem
+	boolean menuHistory() {
+		final Intent intent = new Intent(this, HistoryListActivity.class);
+		startActivity(intent);
+		return true;
 	}
 
 	@LongClick
 	void btnReset() {
 		stop();
-		counts.clear();
-		updateDisplay(fullPeriod);
-		updateCount(counts.size());
+		updateDisplay(new Period(session.getDuration()));
+		updateCount(0);
 		np_hours.setEnabled(true);
 		np_minutes.setEnabled(true);
 		np_seconds.setEnabled(true);
@@ -114,8 +155,8 @@ public class MainActivity extends Activity {
 			running = true;
 
 			period = getPeriod();
-
-			fullPeriod = getPeriod();
+			session = new Session(new DateTime(), period.getMillis());
+			preferences.period().put(session.getDuration());
 			np_hours.setEnabled(false);
 			np_minutes.setEnabled(false);
 			np_seconds.setEnabled(false);
@@ -144,7 +185,7 @@ public class MainActivity extends Activity {
 
 	@UiThread
 	void updateCount(final long count) {
-		txt_count.setText(Long.toString(count));
+		txt_count.setText(String.format("% 5d", count));
 	}
 
 	@UiThread
@@ -154,14 +195,24 @@ public class MainActivity extends Activity {
 		np_seconds.setValue(period.getSeconds());
 	}
 
-	private void showResults() {
-		/*
-		 * final Intent intent = new Intent(getApplicationContext(),
-		 * ResultsActivity_.class);
-		 * 
-		 * intent.putExtra("results", ArrayUtils.toPrimitive(counts.toArray(new
-		 * Long[counts.size()]))); intent.putExtra("period",
-		 * fullPeriod.getMillis()); startActivity(intent);
-		 */
+	@UiThread
+	void showResults() {
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setPositiveButton(R.string.stats,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog,
+							final int id) {
+						dbHelper.insertSession(session);
+					}
+				}).setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog,
+							final int id) {
+					}
+				});
+		builder.create().show();
 	}
 }

@@ -9,10 +9,28 @@
     <string name="restart">Restart</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
+    <string name="padded_zero">"    0"</string>
     <string name="zero">0</string>
+    <string name="eights">88888</string>
     <string name="no_time_entered">Please enter a time before starting</string>
     <string name="title_activity_results">ResultsActivity</string>
     <string name="duration">Duration:</string>
     <string name="total_ticks">Total Ticks:</string>
-
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="save">Save</string>
+    <string name="stats">View Stats</string>
+    <string name="cancel">Cancel</string>
+    <string name="current">Current</string>
+    <string name="menu_history">History</string>
+    <string name="title_activity_tab">TabActivity</string>
+    <string name="title_history_detail">History Detail</string>
+    <string name="title_history_list">Sessions</string>
+    <string name="blank"></string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="ticks">Ticks:</string>
+    <string name="average_time_between">Average Time Between:</string>
+    <string name="longest_time_between">Longest Time Between:</string>
+    <string name="shortest_time_between">Shortest Time Between:</string>
+    <string name="standard_deviation">Standard Deviation:</string>
 </resources>
