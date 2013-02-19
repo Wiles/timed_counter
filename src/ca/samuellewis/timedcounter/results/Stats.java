@@ -1,26 +1,27 @@
 package ca.samuellewis.timedcounter.results;
 
 public class Stats {
-	public static double getMean(final long[] numbers) {
+	public static <T extends Number> double getMean(final T[] numbers) {
 
-		double average = 0;
-		for (final long diff : numbers) {
-			average += diff;
+		double average = 0.0;
+		for (final T diff : numbers) {
+			average += diff.floatValue();
 		}
 		average /= numbers.length;
 		return average;
 	}
 
-	public static double getStandardDeviation(final long[] numbers) {
+	public static <T extends Number> double getStandardDeviation(
+			final T[] numbers) {
 		return Math.sqrt(getVariance(numbers));
 	}
 
-	public static double getVariance(final long[] numbers) {
+	public static <T extends Number> double getVariance(final T[] numbers) {
 		final double mean = getMean(numbers);
 		double temp = 0;
 
-		for (final long a : numbers) {
-			temp += Math.pow(mean - a, 2);
+		for (final T a : numbers) {
+			temp += Math.pow(mean - a.doubleValue(), 2);
 		}
 		return temp / numbers.length;
 	}

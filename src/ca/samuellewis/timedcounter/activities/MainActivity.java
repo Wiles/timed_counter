@@ -8,8 +8,6 @@ import java.util.TimerTask;
 import org.joda.time.DateTime;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Vibrator;
@@ -198,21 +196,8 @@ public class MainActivity extends Activity {
 	@UiThread
 	void showResults() {
 
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setPositiveButton(R.string.stats,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog,
-							final int id) {
-						dbHelper.insertSession(session);
-					}
-				}).setNegativeButton(R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog,
-							final int id) {
-					}
-				});
-		builder.create().show();
+		dbHelper.insertSession(session);
+		menuHistory();
+
 	}
 }
