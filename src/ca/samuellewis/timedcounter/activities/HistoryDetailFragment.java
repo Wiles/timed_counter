@@ -70,8 +70,8 @@ public class HistoryDetailFragment extends Fragment {
 			final View rootView = inflater.inflate(R.layout.session_stats_min,
 					container, false);
 
-			((TextView) rootView.findViewById(R.id.tv_duration)).setText(Long
-					.toString(item.getDuration()));
+			((TextView) rootView.findViewById(R.id.tv_duration))
+					.setText(HumanTime.exactly(item.getDuration()));
 
 			((TextView) rootView.findViewById(R.id.tv_count)).setText(Integer
 					.toString(item.getCount()));
@@ -130,14 +130,14 @@ public class HistoryDetailFragment extends Fragment {
 
 			plot.addSeries(series1, sf);
 
-			((TextView) rootView.findViewById(R.id.tv_longest)).setText(Long
-					.toString((long) max));
+			((TextView) rootView.findViewById(R.id.tv_longest))
+					.setText(HumanTime.exactly((long) max));
 
-			((TextView) rootView.findViewById(R.id.tv_shortest)).setText(Long
-					.toString((long) min));
+			((TextView) rootView.findViewById(R.id.tv_shortest))
+					.setText(HumanTime.exactly((long) min));
 
-			((TextView) rootView.findViewById(R.id.tv_average)).setText(String
-					.format("%1$.2f", mean));
+			((TextView) rootView.findViewById(R.id.tv_average))
+					.setText(HumanTime.exactly((long) mean));
 
 			((TextView) rootView.findViewById(R.id.tv_standard_deviation))
 					.setText(String.format("%1$.2f", stdDev));
