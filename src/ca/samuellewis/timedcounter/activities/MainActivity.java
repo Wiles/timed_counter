@@ -8,8 +8,11 @@ import java.util.TimerTask;
 import org.joda.time.DateTime;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Vibrator;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -130,7 +133,9 @@ public class MainActivity extends Activity {
 	@LongClick
 	void btnReset() {
 		stop();
-		updateDisplay(new Period(session.getDuration()));
+		if (session != null) {
+			updateDisplay(new Period(session.getDuration()));
+		}
 		updateCount(0);
 		np_hours.setEnabled(true);
 		np_minutes.setEnabled(true);
@@ -154,6 +159,9 @@ public class MainActivity extends Activity {
 
 			period = getPeriod();
 			session = new Session(new DateTime(), period.getMillis());
+			for (long i = 0; i < 5000; ++i) {
+				session.addValue(i);
+			}
 			preferences.period().put(session.getDuration());
 			np_hours.setEnabled(false);
 			np_minutes.setEnabled(false);
@@ -196,8 +204,20 @@ public class MainActivity extends Activity {
 	@UiThread
 	void showResults() {
 
-		dbHelper.insertSession(session);
-		menuHistory();
+		final Dialog p = ProgressDialog.show(this, null, "Saving", true, false);
+		final AsyncTask<Session, Integer, Integer> t = new AsyncTask<Session, Integer, Integer>() {
+
+			@Override
+			protected Integer doInBackground(final Session... params) {
+
+				dbHelper.saveSession(session);
+				p.dismiss();
+				menuHistory();
+				return 0;
+			}
+		};
+
+		t.execute(session);
 
 	}
 }

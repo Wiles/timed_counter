@@ -91,6 +91,7 @@
     <com.androidplot.xy.XYPlot
             android:id="@+id/xy_plot"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"
+            title="@string/distribution"/>
 
 </LinearLayout>

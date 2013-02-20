@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public void insertSession(final Session session) {
+	public void saveSession(final Session session) {
 		final SQLiteDatabase db = this.getWritableDatabase();
 		final ContentValues sessionContent = new ContentValues();
 		sessionContent.put(sessionDate, dtf.print(session.getDate()));

@@ -18,9 +18,9 @@ import ca.samuellewis.timedcounter.results.Session;
 import ca.samuellewis.timedcounter.results.Stats;
 
 import com.androidplot.series.XYSeries;
-import com.androidplot.xy.BezierLineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
+import com.eaio.util.text.HumanTime;
 
 /**
  * A fragment representing a single History detail screen. This fragment is
@@ -81,8 +81,8 @@ public class HistoryDetailFragment extends Fragment {
 			final View rootView = inflater.inflate(R.layout.session_stats,
 					container, false);
 
-			((TextView) rootView.findViewById(R.id.tv_duration)).setText(Long
-					.toString(item.getDuration()));
+			((TextView) rootView.findViewById(R.id.tv_duration))
+					.setText(HumanTime.exactly(item.getDuration()));
 
 			((TextView) rootView.findViewById(R.id.tv_count)).setText(Integer
 					.toString(item.getCount()));
@@ -95,15 +95,15 @@ public class HistoryDetailFragment extends Fragment {
 
 			Arrays.sort(timeDifferences);
 
-			final long min = timeDifferences[0];
-			final long max = timeDifferences[timeDifferences.length - 1];
-			final long range = max - min;
+			final double min = timeDifferences[0];
+			final double max = timeDifferences[timeDifferences.length - 1];
+			final double range = max - min;
 
 			final double bucketSize = range / 20;
-			final long[] buckets = new long[40];
+			final long[] buckets = new long[42];
 			int bucket = 0;
 			for (final long value : timeDifferences) {
-				if (value > ((bucket) * bucketSize) + min) {
+				while (value > ((bucket + 1) * bucketSize) + min) {
 					++bucket;
 				}
 				++buckets[(bucket * 2) + 1];
@@ -113,44 +113,28 @@ public class HistoryDetailFragment extends Fragment {
 				buckets[i * 2] = (long) (min + (bucketSize * i));
 			}
 
+			buckets[buckets.length - 1] -= 1;
+
 			final double mean = Stats.getMean(timeDifferences);
 
 			final double stdDev = Stats.getStandardDeviation(timeDifferences);
 
-			final XYPlot mySimpleXYPlot = (XYPlot) rootView
-					.findViewById(R.id.xy_plot);
+			final XYPlot plot = (XYPlot) rootView.findViewById(R.id.xy_plot);
 
-			// Create a couple arrays of y-values to plot:
-			// Turn the above arrays into XYSeries':
 			final XYSeries series1 = new SimpleXYSeries(
 					Arrays.asList(ArrayUtils.toObject(buckets)),
 					SimpleXYSeries.ArrayFormat.XY_VALS_INTERLEAVED, "");
+
 			final HistogramFormatter sf = new HistogramFormatter(Color.argb(
-					150, 0, 255, 0), Color.rgb(0, 255, 00));
+					0x80, 0, 0x99, 0xcc), Color.rgb(0, 0x99, 0xcc));
 
-			mySimpleXYPlot.addSeries(series1, sf);
-
-			final double[] sd = new double[44];
-			for (int i = 0; i < sd.length / 2; ++i) {
-				final double z = (min + (i * bucketSize));
-				sd[i * 2] = z;
-				sd[(i * 2) + 1] = (z * mean) / stdDev;
-			}
-
-			final XYSeries series2 = new SimpleXYSeries(
-					Arrays.asList(ArrayUtils.toObject(sd)),
-					SimpleXYSeries.ArrayFormat.XY_VALS_INTERLEAVED, "");
-			final BezierLineAndPointFormatter bf = new BezierLineAndPointFormatter(
-					Color.rgb(0, 0, 255), Color.argb(0, 0, 0, 255), Color.argb(
-							0, 0, 0, 255));
-
-			mySimpleXYPlot.addSeries(series2, bf);
+			plot.addSeries(series1, sf);
 
 			((TextView) rootView.findViewById(R.id.tv_longest)).setText(Long
-					.toString(max));
+					.toString((long) max));
 
 			((TextView) rootView.findViewById(R.id.tv_shortest)).setText(Long
-					.toString(min));
+					.toString((long) min));
 
 			((TextView) rootView.findViewById(R.id.tv_average)).setText(String
 					.format("%1$.2f", mean));

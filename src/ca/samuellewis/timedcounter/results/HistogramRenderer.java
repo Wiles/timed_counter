@@ -21,23 +21,6 @@ public class HistogramRenderer extends XYSeriesRenderer<HistogramFormatter> {
 		super(plot);
 	}
 
-	/**
-	 * Synchronizes the current thread across multiple objects before executing
-	 * a given task.
-	 */
-	/*
-	 * private void multiSynch(Canvas canvas, RectF plotArea, List<XYSeries> sl,
-	 * int depth) { if (sl != null) { synchronized (sl.get(depth)) { if (depth <
-	 * sl.size()-1) { multiSynch(canvas, plotArea, sl, ++depth); } else { int
-	 * longest = getLongestSeries(sl); if(longest == 0) { return; // no data,
-	 * nothing to do. } TreeMap<Number, XYSeries> seriesMap = new
-	 * TreeMap<Number, XYSeries>(); for(int i = 0; i < longest; i++) {
-	 * seriesMap.clear(); List<XYSeries> seriesList =
-	 * getPlot().getSeriesListForRenderer(this.getClass()); for(XYSeries series
-	 * : seriesList) { if(i < series.size()) { seriesMap.put(series.getY(i),
-	 * series); } } drawBars(canvas, plotArea, seriesMap, i); } } } } }
-	 */
-
 	@Override
 	public void onRender(final Canvas canvas, final RectF plotArea)
 			throws PlotRenderException {
@@ -98,34 +81,29 @@ public class HistogramRenderer extends XYSeriesRenderer<HistogramFormatter> {
 		Map.Entry<Number, XYSeries> entry;
 		for (int i = oa.length - 1; i >= 0; i--) {
 			entry = (Map.Entry<Number, XYSeries>) oa[i];
-			final HistogramFormatter formatter = getFormatter(entry.getValue()); // TODO:
-			// make
-			// this
-			// more
-			// efficient
-			Number yVal = null;
-			Number xVal = null;
+			final HistogramFormatter formatter = getFormatter(entry.getValue());
+			Double yVal = null;
+			Double xVal = null;
 			if (entry.getValue() != null) {
-				yVal = entry.getValue().getY(x);
-				xVal = entry.getValue().getX(x);
+				yVal = entry.getValue().getY(x).doubleValue();
+				xVal = entry.getValue().getX(1).doubleValue();
 			}
 
-			if (yVal != null && xVal != null) { // make sure there's a real
-												// value to draw
-				final float halfWidth = (plotArea.width() / getLongestSeries()) / 2;
-				final float pixX = ValPixConverter.valToPix(xVal.doubleValue(),
-						getPlot().getCalculatedMinX().doubleValue(), getPlot()
+			if (yVal != null && xVal != null) {
+				final float width = (plotArea.width() / getLongestSeries());
+				final float pixX = x
+						* ValPixConverter.valToPix(xVal, getPlot()
+								.getCalculatedMinX().doubleValue(), getPlot()
 								.getCalculatedMaxX().doubleValue(), plotArea
-								.width(), false)
-						+ (plotArea.left);
-				final float pixY = ValPixConverter.valToPix(yVal.doubleValue(),
-						getPlot().getCalculatedMinY().doubleValue(), getPlot()
-								.getCalculatedMaxY().doubleValue(), plotArea
-								.height(), true)
+								.width(), false) + plotArea.left + width / 2.0f;
+				final float pixY = ValPixConverter.valToPix(yVal, getPlot()
+						.getCalculatedMinY().doubleValue(), getPlot()
+						.getCalculatedMaxY().doubleValue(), plotArea.height(),
+						true)
 						+ plotArea.top;
-				canvas.drawRect(pixX - halfWidth, pixY, pixX + halfWidth,
+				canvas.drawRect(pixX - width / 2, pixY, pixX + width / 2,
 						plotArea.bottom, formatter.getFillPaint());
-				canvas.drawRect(pixX - halfWidth, pixY, pixX + halfWidth,
+				canvas.drawRect(pixX - width / 2, pixY, pixX + width / 2,
 						plotArea.bottom, formatter.getBorderPaint());
 			}
 		}

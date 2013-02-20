@@ -33,4 +33,6 @@
     <string name="longest_time_between">Longest Time Between:</string>
     <string name="shortest_time_between">Shortest Time Between:</string>
     <string name="standard_deviation">Standard Deviation:</string>
+    <string name="distribution">Distribution</string>
+    <string name="difference">Difference</string>
 </resources>

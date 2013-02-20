@@ -31,7 +31,6 @@ public class HistogramFormatter extends XYSeriesFormatter {
 
 	{
 		fillPaint = new Paint();
-		// fillPaint.setColor(Color.RED);
 		fillPaint.setStyle(Paint.Style.FILL);
 		fillPaint.setAlpha(100);
 		borderPaint = new Paint();
