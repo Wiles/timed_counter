@@ -1,13 +1,17 @@
 package ca.samuellewis.timedcounter.activities;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import ca.samuellewis.timedcounter.R;
 import ca.samuellewis.timedcounter.db.DatabaseHelper;
 import ca.samuellewis.timedcounter.results.HistoryListAdapter;
 import ca.samuellewis.timedcounter.results.Session;
@@ -34,8 +38,6 @@ public class HistoryListFragment extends ListFragment {
 	 * clicks.
 	 */
 	private Callbacks mCallbacks = sDummyCallbacks;
-
-	List<Session> items;
 
 	/**
 	 * The current activated item position. Only used on tablets.
@@ -76,10 +78,9 @@ public class HistoryListFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 
 		final DatabaseHelper db = new DatabaseHelper(getActivity());
-		items = Arrays.asList(db.getSessions());
 
-		setListAdapter(new HistoryListAdapter(getActivity(),
-				items.toArray(new Session[items.size()])));
+		setListAdapter(new HistoryListAdapter(getActivity(), db.getSessions()));
+
 	}
 
 	@Override
@@ -92,6 +93,45 @@ public class HistoryListFragment extends ListFragment {
 			setActivatedPosition(savedInstanceState
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
+
+		getListView().setLongClickable(true);
+		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(final AdapterView<?> parent,
+					final View v, final int position, final long id) {
+				final AlertDialog.Builder builder = new AlertDialog.Builder(
+						getActivity());
+				builder.setMessage(R.string.delete)
+						.setPositiveButton(R.string.yes, new OnClickListener() {
+
+							@SuppressWarnings("unchecked")
+							@Override
+							public void onClick(final DialogInterface dialog,
+									final int which) {
+								final DatabaseHelper db = new DatabaseHelper(
+										getActivity());
+
+								final ArrayAdapter<Session> adapter = ((ArrayAdapter<Session>) getListAdapter());
+								final Session item = adapter.getItem(position);
+								db.deleteSession(item.getId());
+
+								adapter.remove(item);
+								adapter.notifyDataSetChanged();
+
+							}
+						})
+						.setNegativeButton(R.string.no, new OnClickListener() {
+
+							@Override
+							public void onClick(final DialogInterface dialog,
+									final int which) {
+							}
+						});
+				builder.create().show();
+				return true;
+			}
+		});
 	}
 
 	@Override
@@ -114,6 +154,7 @@ public class HistoryListFragment extends ListFragment {
 		mCallbacks = sDummyCallbacks;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onListItemClick(final ListView listView, final View view,
 			final int position, final long id) {
@@ -121,7 +162,9 @@ public class HistoryListFragment extends ListFragment {
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(items.get(position).getId());
+
+		final ArrayAdapter<Session> adapter = ((ArrayAdapter<Session>) getListAdapter());
+		mCallbacks.onItemSelected(adapter.getItem(position).getId());
 	}
 
 	@Override

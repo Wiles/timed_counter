@@ -48,8 +48,6 @@ public class HistoryListActivity extends FragmentActivity implements
 					.findFragmentById(R.id.history_list))
 					.setActivateOnItemClick(true);
 		}
-
-		// TODO: If exposing deep links into your app, handle intents here.
 	}
 
 	/**

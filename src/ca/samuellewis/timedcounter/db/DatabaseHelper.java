@@ -89,7 +89,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		return null;
+	}
 
+	public void deleteSession(final int id) {
+		final SQLiteDatabase db = getWritableDatabase();
+		db.beginTransaction();
+		final int a = db.delete(sessionTable,
+				String.format("%s = %d", sessionId, id), null);
+		final int b = db.delete(entryTable,
+				String.format("%s = %d", entrySession, id), null);
+		System.out.println(a + b);
+		db.setTransactionSuccessful();
+		db.endTransaction();
 	}
 
 	public Session[] getSessions() {

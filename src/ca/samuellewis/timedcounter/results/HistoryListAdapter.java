@@ -1,5 +1,8 @@
 package ca.samuellewis.timedcounter.results;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -16,18 +19,14 @@ import ca.samuellewis.timedcounter.R;
 
 public class HistoryListAdapter extends ArrayAdapter<Session> {
 
-	Context context;
-	Session[] values;
-
 	final DateTimeFormatter dtf = ISODateTimeFormat.basicDateTime();
 	final DateTimeFormatter d = DateTimeFormat.shortDateTime();
 	final PrettyTime prettyTime = new PrettyTime();
 	private Typeface face;
 
 	public HistoryListAdapter(final Context context, final Session[] values) {
-		super(context, R.layout.session_row, values);
-		this.context = context;
-		this.values = values;
+		super(context, R.layout.session_row, new ArrayList<Session>(
+				Arrays.asList(values)));
 
 		face = Typeface.createFromAsset(context.getAssets(),
 				"fonts/digital_segment_thin.ttf");
@@ -37,9 +36,9 @@ public class HistoryListAdapter extends ArrayAdapter<Session> {
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
 
-		final Session entry = values[position];
+		final Session entry = getItem(position);
 
-		final LayoutInflater inflater = (LayoutInflater) context
+		final LayoutInflater inflater = (LayoutInflater) getContext()
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View rowView = inflater.inflate(R.layout.session_row, parent,
 				false);
