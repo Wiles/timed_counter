@@ -38,8 +38,8 @@ public class HistoryDetailActivity extends FragmentActivity {
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
 			final Bundle arguments = new Bundle();
-			arguments.putInt(HistoryDetailFragment.ARG_ITEM_ID, getIntent()
-					.getIntExtra(HistoryDetailFragment.ARG_ITEM_ID, -1));
+			arguments.putLong(HistoryDetailFragment.ARG_ITEM_ID, getIntent()
+					.getLongExtra(HistoryDetailFragment.ARG_ITEM_ID, -1));
 			final HistoryDetailFragment fragment = new HistoryDetailFragment();
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()

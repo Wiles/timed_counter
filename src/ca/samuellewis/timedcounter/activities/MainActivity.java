@@ -8,12 +8,10 @@ import java.util.TimerTask;
 import org.joda.time.DateTime;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
-import android.os.Vibrator;
+import android.view.HapticFeedbackConstants;
+import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,12 +22,15 @@ import ca.samuellewis.timedcounter.results.Session;
 import ca.samuellewis.timedcounter.time.Period;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Background;
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.InstanceState;
 import com.googlecode.androidannotations.annotations.LongClick;
+import com.googlecode.androidannotations.annotations.NonConfigurationInstance;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
-import com.googlecode.androidannotations.annotations.SystemService;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.googlecode.androidannotations.annotations.sharedpreferences.Pref;
@@ -38,18 +39,26 @@ import com.googlecode.androidannotations.annotations.sharedpreferences.Pref;
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
 
+	@NonConfigurationInstance
+	@Bean
+	BackgroundTask task;
+
 	@Pref
 	Preferences_ preferences;
 
-	DatabaseHelper dbHelper;
-
-	private boolean running = false;
+	@InstanceState
+	boolean running = false;
 
 	private Timer timer;
 
-	private Period period;
+	@InstanceState
+	protected Period period;
 
-	private Session session;
+	@InstanceState
+	protected Session session;
+
+	@InstanceState
+	protected long count;
 
 	@ViewById
 	NumberPicker np_hours;
@@ -66,8 +75,8 @@ public class MainActivity extends Activity {
 	@ViewById
 	TextView txt_count_background;
 
-	@SystemService
-	Vibrator vibrator;
+	@ViewById
+	Button btnPlus;
 
 	private UncaughtExceptionHandler originalUEH;
 
@@ -75,7 +84,6 @@ public class MainActivity extends Activity {
 
 	@AfterViews
 	void initMainActivity() {
-
 		originalUEH = Thread.getDefaultUncaughtExceptionHandler();
 
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -88,8 +96,6 @@ public class MainActivity extends Activity {
 
 		Thread.currentThread().setUncaughtExceptionHandler(
 				Thread.getDefaultUncaughtExceptionHandler());
-
-		dbHelper = new DatabaseHelper(this);
 
 		np_hours.setMinValue(0);
 		np_hours.setMaxValue(99);
@@ -106,21 +112,31 @@ public class MainActivity extends Activity {
 		txt_count.setTypeface(face);
 		txt_count_background.setTypeface(face);
 
-		updateDisplay(new Period(preferences.period().get()));
+		if (period == null) {
+			task.updateDisplay(new Period(preferences.period().get()));
+
+		} else {
+			task.updateDisplay(period);
+		}
 	}
 
 	@Click
 	void btnPlus() {
+		btnPlus.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 		if (!running) {
 			start();
 		}
 		if (running) {
 			if (session.size() < 100000) {
-				session.addValue(new Date().getTime());
-				updateCount(session.size());
+				++count;
+				updateCount(count);
 			}
-			vibrator.vibrate(10);
 		}
+	}
+
+	@Background
+	void addEntry() {
+		new DatabaseHelper(this).addEntry(session, new Date().getTime());
 	}
 
 	@OptionsItem
@@ -134,7 +150,7 @@ public class MainActivity extends Activity {
 	void btnReset() {
 		stop();
 		if (session != null) {
-			updateDisplay(new Period(session.getDuration()));
+			task.updateDisplay(new Period(session.getDuration()));
 		}
 		updateCount(0);
 		np_hours.setEnabled(true);
@@ -156,27 +172,30 @@ public class MainActivity extends Activity {
 				return;
 			}
 			running = true;
+			count = 0;
 
 			period = getPeriod();
 			session = new Session(new DateTime(), period.getMillis());
-			for (long i = 0; i < 5000; ++i) {
-				session.addValue(i);
-			}
+			session = new DatabaseHelper(this)
+					.createSession(period.getMillis());
 			preferences.period().put(session.getDuration());
 			np_hours.setEnabled(false);
 			np_minutes.setEnabled(false);
 			np_seconds.setEnabled(false);
 
+			timer = task.getTimer();
+			timer.cancel();
 			timer = new Timer(true);
+			task.setTimer(timer);
 			timer.schedule(new TimerTask() {
 
 				@Override
 				public void run() {
 					period.minusSeconds(1);
-					updateDisplay(period);
+					task.updateDisplay(period);
 					if (period.isZero()) {
 						stop();
-						showResults();
+						menuHistory();
 					}
 				}
 			}, 0, 1000);
@@ -201,23 +220,4 @@ public class MainActivity extends Activity {
 		np_seconds.setValue(period.getSeconds());
 	}
 
-	@UiThread
-	void showResults() {
-
-		final Dialog p = ProgressDialog.show(this, null, "Saving", true, false);
-		final AsyncTask<Session, Integer, Integer> t = new AsyncTask<Session, Integer, Integer>() {
-
-			@Override
-			protected Integer doInBackground(final Session... params) {
-
-				dbHelper.saveSession(session);
-				p.dismiss();
-				menuHistory();
-				return 0;
-			}
-		};
-
-		t.execute(session);
-
-	}
 }

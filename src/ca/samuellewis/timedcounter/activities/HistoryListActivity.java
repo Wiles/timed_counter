@@ -55,13 +55,13 @@ public class HistoryListActivity extends FragmentActivity implements
 	 * that the item with the given ID was selected.
 	 */
 	@Override
-	public void onItemSelected(final int id) {
+	public void onItemSelected(final long id) {
 		if (mTwoPane) {
 			// In two-pane mode, show the detail view in this activity by
 			// adding or replacing the detail fragment using a
 			// fragment transaction.
 			final Bundle arguments = new Bundle();
-			arguments.putInt(HistoryDetailFragment.ARG_ITEM_ID, id);
+			arguments.putLong(HistoryDetailFragment.ARG_ITEM_ID, id);
 			final HistoryDetailFragment fragment = new HistoryDetailFragment();
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()

@@ -1,5 +1,6 @@
 package ca.samuellewis.timedcounter.results;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,13 +10,15 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-public class Session {
+public class Session implements Serializable {
 
-	private Integer count;
-	private int id;
+	private static final long serialVersionUID = 4359434499804496744L;
+
+	private transient Integer count;
+	private Long id;
 	private DateTime date;
-	private long duration;
-	private List<Long> values;
+	private Long duration;
+	private transient List<Long> values;
 	private ValuesSource source;
 
 	final DateTimeFormatter dtf = ISODateTimeFormat.basicDateTime();
@@ -49,7 +52,11 @@ public class Session {
 
 	public long[] getValues() {
 		if (values == null && source != null) {
-			values = Arrays.asList(ArrayUtils.toObject(source.getValues()));
+			if (source != null) {
+				values = Arrays.asList(ArrayUtils.toObject(source.getValues()));
+			} else {
+				return new long[0];
+			}
 		}
 		return ArrayUtils.toPrimitive(values.toArray(new Long[values.size()]));
 	}
@@ -67,11 +74,11 @@ public class Session {
 		return dtf.print(date);
 	}
 
-	public void setId(final int id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

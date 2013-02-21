@@ -1,0 +1,122 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <View
+        android:id="@+id/strut"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/btnPlus" >
+
+        <View
+            android:id="@+id/strut2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/np_minutes"
+            android:layout_alignTop="@+id/np_minutes"
+            android:layout_toLeftOf="@+id/np_minutes"
+            android:gravity="center"
+            android:text="@string/time_separator"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/txt_count"
+            android:layout_alignBottom="@+id/np_minutes"
+            android:layout_alignTop="@+id/np_minutes"
+            android:layout_toRightOf="@+id/np_minutes"
+            android:gravity="center"
+            android:text="@string/time_separator"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <NumberPicker
+            android:id="@+id/np_seconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/txt_count"
+            android:layout_toRightOf="@+id/TextView01" />
+
+        <NumberPicker
+            android:id="@+id/np_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView1"
+            android:layout_toLeftOf="@+id/textView1"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <NumberPicker
+            android:id="@+id/np_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/txt_count"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/txt_count_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:fontFamily="courier new"
+            android:gravity="center"
+            android:text="@string/eights"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#606060"
+            android:textSize="72sp" />
+
+        <TextView
+            android:id="@+id/txt_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="#00000000"
+            android:fontFamily="courier new"
+            android:gravity="center"
+            android:text="@string/padded_zero"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="72sp" />
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/np_seconds"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/restart" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnPlus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/strut"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/ince" >
+
+        <requestFocus />
+    </Button>
+
+</RelativeLayout>

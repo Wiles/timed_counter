@@ -52,7 +52,7 @@ public class HistoryDetailFragment extends Fragment {
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			final DatabaseHelper db = new DatabaseHelper(getActivity());
-			item = db.getSession(getArguments().getInt(ARG_ITEM_ID));
+			item = db.getSession(getArguments().getLong(ARG_ITEM_ID));
 		}
 	}
 

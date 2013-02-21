@@ -55,22 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public void saveSession(final Session session) {
-		final SQLiteDatabase db = this.getWritableDatabase();
-		final ContentValues sessionContent = new ContentValues();
-		sessionContent.put(sessionDate, dtf.print(session.getDate()));
-		sessionContent.put(sessionDuration, session.getDuration());
-		final long rowId = db.insert(sessionTable, null, sessionContent);
-
-		for (final long value : session.getValues()) {
-			final ContentValues sessionValue = new ContentValues();
-			sessionValue.put(entrySession, rowId);
-			sessionValue.put(entryValue, value);
-			db.insert(entryTable, null, sessionValue);
-		}
-	}
-
-	public Session getSession(final int id) {
+	public Session getSession(final long id) {
 		final SQLiteDatabase db = getReadableDatabase();
 		final Cursor results = db.query(sessionTable, new String[] {
 				sessionDate, sessionDuration },
@@ -84,14 +69,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			final DateTime date = dtf.parseDateTime(results
 					.getString(dateIndex));
-			final int duration = results.getInt(durationIndex);
+			final long duration = results.getInt(durationIndex);
 			return createSession(id, date, duration, db);
 		}
 
 		return null;
 	}
 
-	public void deleteSession(final int id) {
+	public void deleteSession(final long id) {
 		final SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 		final int a = db.delete(sessionTable,
@@ -120,10 +105,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		while (results.moveToNext()) {
 
-			final Integer id = results.getInt(idIndex);
+			final Long id = results.getLong(idIndex);
 			final DateTime date = dtf.parseDateTime(results
 					.getString(dateIndex));
-			final int duration = results.getInt(durationIndex);
+			final long duration = results.getInt(durationIndex);
 			ids[i] = createSession(id, date, duration, db);
 			++i;
 		}
@@ -131,8 +116,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return ids;
 	}
 
-	private Session createSession(final Integer id, final DateTime date,
-			final int duration, final SQLiteDatabase db) {
+	private Session createSession(final Long id, final DateTime date,
+			final Long duration, final SQLiteDatabase db) {
 		final Session session = new Session(date, duration, new ValuesSource() {
 
 			@Override
@@ -140,7 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				final Cursor valueResults = db.query(entryTable,
 						new String[] { entryValue },
 						String.format("%s = %d", entrySession, id), null, null,
-						null, entryId);
+						null, entryValue);
 				final long[] values = new long[valueResults.getCount()];
 
 				final int valueIndex = valueResults.getColumnIndex(entryValue);
@@ -167,5 +152,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		});
 		session.setId(id);
 		return session;
+	}
+
+	public Session createSession(final long duration) {
+		final DateTime now = new DateTime();
+		final SQLiteDatabase db = this.getWritableDatabase();
+		final ContentValues sessionContent = new ContentValues();
+		sessionContent.put(sessionDate, dtf.print(now));
+		sessionContent.put(sessionDuration, duration);
+		final Long rowId = db.insert(sessionTable, null, sessionContent);
+
+		return createSession(rowId, now, duration, getReadableDatabase());
+	}
+
+	public void addEntry(final Session session, final long value) {
+		final SQLiteDatabase db = this.getWritableDatabase();
+		final ContentValues sessionValue = new ContentValues();
+		sessionValue.put(entrySession, session.getId());
+		sessionValue.put(entryValue, value);
+		db.insert(entryTable, null, sessionValue);
 	}
 }

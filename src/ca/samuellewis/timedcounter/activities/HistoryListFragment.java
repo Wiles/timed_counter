@@ -53,7 +53,7 @@ public class HistoryListFragment extends ListFragment {
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onItemSelected(int i);
+		public void onItemSelected(long i);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class HistoryListFragment extends ListFragment {
 	 */
 	private static Callbacks sDummyCallbacks = new Callbacks() {
 		@Override
-		public void onItemSelected(final int id) {
+		public void onItemSelected(final long id) {
 		}
 	};
 

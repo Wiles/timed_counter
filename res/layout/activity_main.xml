@@ -50,11 +50,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/np_hours"
-        android:text="@string/eights"
-        android:gravity="center"
-        android:textColor="#606060"
         android:fontFamily="courier new"
+        android:gravity="center"
+        android:text="@string/eights"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#606060"
         android:textSize="72sp" />
 
     <TextView
@@ -64,10 +64,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/np_hours"
-        android:text="@string/padded_zero"
-        android:gravity="center"
         android:background="#00000000"
         android:fontFamily="courier new"
+        android:gravity="center"
+        android:text="@string/padded_zero"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="72sp" />
 
@@ -94,6 +94,9 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/np_seconds"
-        android:text="@string/restart" />
+        android:text="@string/restart" >
 
-</RelativeLayout>	
+        <requestFocus />
+    </Button>
+
+</RelativeLayout>

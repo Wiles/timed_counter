@@ -1,6 +1,10 @@
 package ca.samuellewis.timedcounter.time;
 
-public class Period {
+import java.io.Serializable;
+
+public class Period implements Serializable {
+
+	private static final long serialVersionUID = -4365521520520918860L;
 
 	private int hours;
 	private int minutes;
