@@ -1,0 +1,5 @@
+analyseLocally=true
+eclipse.preferences.version=1
+projectKey=timed_counter
+serverUrl=http\://localhost\:9876
+version=2

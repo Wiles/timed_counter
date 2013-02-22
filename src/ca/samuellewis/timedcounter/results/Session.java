@@ -14,14 +14,14 @@ public class Session implements Serializable {
 
 	private static final long serialVersionUID = 4359434499804496744L;
 
-	private transient Integer count;
+	private transient Long count;
 	private long id;
 	private DateTime date;
 	private long duration;
 	private transient List<Long> values;
 	private transient ValuesSource source;
 
-	private final static DateTimeFormatter dtf = ISODateTimeFormat
+	private static final DateTimeFormatter DTF = ISODateTimeFormat
 			.basicDateTime();
 
 	public Session(final DateTime date, final long duration) {
@@ -72,7 +72,7 @@ public class Session implements Serializable {
 
 	@Override
 	public String toString() {
-		return dtf.print(date);
+		return DTF.print(date);
 	}
 
 	public void setId(final long id) {
@@ -83,7 +83,7 @@ public class Session implements Serializable {
 		return id;
 	}
 
-	public int getCount() {
+	public long getCount() {
 		if (values != null) {
 			return values.size();
 		} else if (count != null) {

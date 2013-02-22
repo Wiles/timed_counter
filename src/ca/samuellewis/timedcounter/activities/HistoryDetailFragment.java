@@ -34,6 +34,8 @@ public class HistoryDetailFragment extends Fragment {
 	 */
 	public static final String ARG_ITEM_ID = "item_id";
 
+	private static final int BUCKET_COUNT = 20;
+
 	/**
 	 * The dummy content this fragment is presenting.
 	 */
@@ -78,12 +80,8 @@ public class HistoryDetailFragment extends Fragment {
 			return rootView;
 		} else {
 			View rootView = null;
-			try {
-				rootView = inflater.inflate(R.layout.session_stats, container,
-						false);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
+			rootView = inflater.inflate(R.layout.session_stats, container,
+					false);
 			((TextView) rootView.findViewById(R.id.tv_duration))
 					.setText(HumanTime.exactly(item.getDuration()));
 
@@ -102,8 +100,8 @@ public class HistoryDetailFragment extends Fragment {
 			final double max = timeDifferences[timeDifferences.length - 1];
 			final double range = max - min;
 
-			final double bucketSize = range / 20;
-			final long[] buckets = new long[42];
+			final double bucketSize = range / BUCKET_COUNT;
+			final long[] buckets = new long[BUCKET_COUNT * 2 + 2];
 			int bucket = 0;
 			for (final long value : timeDifferences) {
 				while (value > ((bucket + 1) * bucketSize) + min) {

@@ -2,3 +2,4 @@ gen/
 target/
 bin/
 .apt_generated/
+.sonar

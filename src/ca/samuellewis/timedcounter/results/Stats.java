@@ -1,6 +1,10 @@
 package ca.samuellewis.timedcounter.results;
 
-public class Stats {
+public final class Stats {
+
+	private Stats() {
+	}
+
 	public static <T extends Number> double getMean(final T[] numbers) {
 
 		double average = 0.0;

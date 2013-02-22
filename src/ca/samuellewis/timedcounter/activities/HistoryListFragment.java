@@ -53,7 +53,7 @@ public class HistoryListFragment extends ListFragment {
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onItemSelected(long i);
+		void onItemSelected(long i);
 	}
 
 	/**
@@ -83,6 +83,20 @@ public class HistoryListFragment extends ListFragment {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	private void deleteItem(final long position) {
+
+		final DatabaseHelper db = new DatabaseHelper(getActivity());
+
+		final ArrayAdapter<Session> adapter = ((ArrayAdapter<Session>) getListAdapter());
+		final Session item = adapter.getItem((int) position);
+
+		db.deleteSession(item.getId());
+
+		adapter.remove(item);
+		adapter.notifyDataSetChanged();
+	}
+
 	@Override
 	public void onViewCreated(final View view, final Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -102,30 +116,12 @@ public class HistoryListFragment extends ListFragment {
 					final View v, final int position, final long id) {
 				final AlertDialog.Builder builder = new AlertDialog.Builder(
 						getActivity());
-				builder.setMessage(R.string.delete)
-						.setPositiveButton(R.string.yes, new OnClickListener() {
-
-							@SuppressWarnings("unchecked")
+				builder.setMessage(R.string.delete).setPositiveButton(
+						R.string.yes, new OnClickListener() {
 							@Override
 							public void onClick(final DialogInterface dialog,
 									final int which) {
-								final DatabaseHelper db = new DatabaseHelper(
-										getActivity());
-
-								final ArrayAdapter<Session> adapter = ((ArrayAdapter<Session>) getListAdapter());
-								final Session item = adapter.getItem(position);
-								db.deleteSession(item.getId());
-
-								adapter.remove(item);
-								adapter.notifyDataSetChanged();
-
-							}
-						})
-						.setNegativeButton(R.string.no, new OnClickListener() {
-
-							@Override
-							public void onClick(final DialogInterface dialog,
-									final int which) {
+								deleteItem(position);
 							}
 						});
 				builder.create().show();

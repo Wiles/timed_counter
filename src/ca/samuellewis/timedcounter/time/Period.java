@@ -2,6 +2,8 @@ package ca.samuellewis.timedcounter.time;
 
 import java.io.Serializable;
 
+import org.joda.time.DateTimeConstants;
+
 public class Period implements Serializable {
 
 	private static final long serialVersionUID = -4365521520520918860L;
@@ -16,15 +18,16 @@ public class Period implements Serializable {
 			throw new IllegalArgumentException("Arguments cannot be zero");
 		}
 		this.hours = hours;
-		this.minutes = minutes % 60;
-		this.seconds = seconds % 60;
+		this.minutes = minutes % DateTimeConstants.MINUTES_PER_HOUR;
+		this.seconds = seconds % DateTimeConstants.SECONDS_PER_MINUTE;
 	}
 
 	public Period(final long millis) {
-		this.millis = (int) (millis % 1000);
-		this.seconds = (int) (millis / 1000 % 60);
-		this.minutes = (int) (millis / 60000 % 60);
-		this.hours = (int) (millis / 3600000);
+		this.millis = (int) (millis % DateTimeConstants.MILLIS_PER_SECOND);
+		this.seconds = (int) (millis / DateTimeConstants.MILLIS_PER_SECOND % DateTimeConstants.SECONDS_PER_MINUTE);
+		this.minutes = (int) (millis
+				/ (DateTimeConstants.MILLIS_PER_SECOND * DateTimeConstants.SECONDS_PER_MINUTE) % DateTimeConstants.SECONDS_PER_MINUTE);
+		this.hours = (int) (millis / DateTimeConstants.SECONDS_PER_HOUR);
 	}
 
 	public boolean isZero() {
@@ -32,7 +35,9 @@ public class Period implements Serializable {
 	}
 
 	public long getMillis() {
-		return (hours * 3600 + minutes * 60 + seconds) * 1000 + millis;
+		return (hours * DateTimeConstants.SECONDS_PER_HOUR + minutes
+				* DateTimeConstants.SECONDS_PER_MINUTE + seconds)
+				* DateTimeConstants.MILLIS_PER_SECOND + millis;
 	}
 
 	public void minusHours(final int hours) {
@@ -48,14 +53,15 @@ public class Period implements Serializable {
 			if (this.hours == 0) {
 				this.minutes = 0;
 			} else {
-				this.minutes = 60 + this.minutes;
+				this.minutes = DateTimeConstants.MINUTES_PER_HOUR
+						+ this.minutes;
 				minusHours(1);
 			}
 		}
 	}
 
 	public void minusSeconds(final int seconds) {
-		if (seconds >= 60) {
+		if (seconds >= DateTimeConstants.SECONDS_PER_MINUTE) {
 			throw new IllegalArgumentException(
 					"Only a mixinum of 59 seconds can be removed");
 		}
@@ -64,7 +70,8 @@ public class Period implements Serializable {
 			if (this.hours == 0 && this.minutes == 0) {
 				this.seconds = 0;
 			} else {
-				this.seconds = 60 + this.seconds;
+				this.seconds = DateTimeConstants.SECONDS_PER_MINUTE
+						+ this.seconds;
 				minusMinutes(1);
 
 			}
@@ -72,7 +79,7 @@ public class Period implements Serializable {
 	}
 
 	public void minusMillis(final long milli) {
-		if (seconds >= 1000) {
+		if (milli >= DateTimeConstants.MILLIS_PER_SECOND) {
 			throw new IllegalArgumentException(
 					"Only a maximum of 999 milis can be removed");
 		}
@@ -82,7 +89,7 @@ public class Period implements Serializable {
 			if (this.hours == 0 && this.minutes == 0 && this.seconds == 0) {
 				this.millis = 0;
 			} else {
-				this.millis = 1000 + this.millis;
+				this.millis = DateTimeConstants.MILLIS_PER_SECOND + this.millis;
 				minusSeconds(1);
 
 			}

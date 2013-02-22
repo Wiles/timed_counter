@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import android.content.Context;
@@ -19,9 +18,8 @@ import ca.samuellewis.timedcounter.R;
 
 public class HistoryListAdapter extends ArrayAdapter<Session> {
 
-	final DateTimeFormatter dtf = ISODateTimeFormat.basicDateTime();
-	final DateTimeFormatter d = DateTimeFormat.shortDateTime();
-	final PrettyTime prettyTime = new PrettyTime();
+	private static final DateTimeFormatter D = DateTimeFormat.shortDateTime();
+	private static final PrettyTime PRETTY_TIME = new PrettyTime();
 	private Typeface face;
 
 	public HistoryListAdapter(final Context context, final Session[] values) {
@@ -47,12 +45,12 @@ public class HistoryListAdapter extends ArrayAdapter<Session> {
 		final TextView count = (TextView) rowView.findViewById(R.id.tv_count);
 		final TextView countBackground = (TextView) rowView
 				.findViewById(R.id.tv_count_back);
-		date.setText(d.print(entry.getDate()));
+		date.setText(D.print(entry.getDate()));
 
 		count.setTypeface(face);
 		countBackground.setTypeface(face);
 
-		age.setText(prettyTime.format(entry.getDate().toDate()));
+		age.setText(PRETTY_TIME.format(entry.getDate().toDate()));
 
 		count.setText(String.format("% 5d", entry.getCount()));
 

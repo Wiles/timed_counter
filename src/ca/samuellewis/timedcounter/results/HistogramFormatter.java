@@ -10,6 +10,9 @@ import com.androidplot.xy.XYSeriesFormatter;
 
 @SuppressWarnings("rawtypes")
 public class HistogramFormatter extends XYSeriesFormatter {
+
+	private static final int ALPHA = 100;
+
 	public Paint getFillPaint() {
 		return fillPaint;
 	}
@@ -32,10 +35,10 @@ public class HistogramFormatter extends XYSeriesFormatter {
 	{
 		fillPaint = new Paint();
 		fillPaint.setStyle(Paint.Style.FILL);
-		fillPaint.setAlpha(100);
+		fillPaint.setAlpha(ALPHA);
 		borderPaint = new Paint();
 		borderPaint.setStyle(Paint.Style.STROKE);
-		borderPaint.setAlpha(100);
+		borderPaint.setAlpha(ALPHA);
 	}
 
 	/**

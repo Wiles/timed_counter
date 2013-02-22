@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,13 +42,13 @@ public class MainActivity extends Activity {
 
 	@NonConfigurationInstance
 	@Bean
-	BackgroundTask task;
+	protected BackgroundTask task;
 
 	@Pref
-	Preferences_ preferences;
+	protected Preferences_ preferences;
 
 	@InstanceState
-	boolean running = false;
+	protected boolean running = false;
 
 	private Timer timer;
 
@@ -61,26 +62,28 @@ public class MainActivity extends Activity {
 	protected long count;
 
 	@ViewById
-	NumberPicker np_hours;
+	protected NumberPicker np_hours;
 
 	@ViewById
-	NumberPicker np_minutes;
+	protected NumberPicker np_minutes;
 
 	@ViewById
-	NumberPicker np_seconds;
+	protected NumberPicker np_seconds;
 
 	@ViewById
-	TextView txt_count;
+	protected TextView txt_count;
 
 	@ViewById
-	TextView txt_count_background;
+	protected TextView txt_count_background;
 
 	@ViewById
-	Button btnPlus;
+	protected Button btnPlus;
 
 	private UncaughtExceptionHandler originalUEH;
 
-	Typeface face;
+	private static final int MAX_COUNT = 99999;
+
+	private static final int MAX_HOURS = 99;
 
 	@AfterViews
 	void initMainActivity() {
@@ -98,15 +101,15 @@ public class MainActivity extends Activity {
 				Thread.getDefaultUncaughtExceptionHandler());
 
 		np_hours.setMinValue(0);
-		np_hours.setMaxValue(99);
+		np_hours.setMaxValue(MAX_HOURS);
 
 		np_minutes.setMinValue(0);
-		np_minutes.setMaxValue(59);
+		np_minutes.setMaxValue(DateTimeConstants.MINUTES_PER_HOUR - 1);
 
 		np_seconds.setMinValue(0);
-		np_seconds.setMaxValue(59);
+		np_seconds.setMaxValue(DateTimeConstants.SECONDS_PER_MINUTE - 1);
 
-		face = Typeface.createFromAsset(getAssets(),
+		final Typeface face = Typeface.createFromAsset(getAssets(),
 				"fonts/digital_segment_thin.ttf");
 
 		txt_count.setTypeface(face);
@@ -126,13 +129,12 @@ public class MainActivity extends Activity {
 		if (!running) {
 			start();
 		}
-		if (running) {
-			if (count < 100000) {
-				++count;
-				updateCount(count);
-				addEntry();
-			}
+		if (running && count <= MAX_COUNT) {
+			++count;
+			updateCount(count);
+			addEntry();
 		}
+
 	}
 
 	@Background
@@ -199,7 +201,7 @@ public class MainActivity extends Activity {
 						menuHistory();
 					}
 				}
-			}, 0, 1000);
+			}, 0, DateTimeConstants.MILLIS_PER_SECOND);
 		}
 	}
 

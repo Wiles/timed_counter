@@ -12,7 +12,7 @@ import com.googlecode.androidannotations.annotations.RootContext;
 public class BackgroundTask {
 
 	@RootContext
-	MainActivity activity;
+	protected MainActivity activity;
 
 	private boolean saving;
 

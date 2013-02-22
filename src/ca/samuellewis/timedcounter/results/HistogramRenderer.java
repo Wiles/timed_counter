@@ -27,12 +27,10 @@ public class HistogramRenderer extends XYSeriesRenderer<HistogramFormatter> {
 
 		final List<XYSeries> sl = getPlot().getSeriesListForRenderer(
 				this.getClass());
-		// need to synch on each series in sl before proceeding with render
-		// multiSynch(canvas, plotArea, sl, 0);
 
 		final int longest = getLongestSeries(sl);
 		if (longest == 0) {
-			return; // no data, nothing to do.
+			return;
 		}
 		final TreeMap<Number, XYSeries> seriesMap = new TreeMap<Number, XYSeries>();
 		for (int i = 0; i < longest; i++) {
@@ -74,7 +72,7 @@ public class HistogramRenderer extends XYSeriesRenderer<HistogramFormatter> {
 
 	@SuppressWarnings("unchecked")
 	private void drawBars(final Canvas canvas, final RectF plotArea,
-			final TreeMap<Number, XYSeries> seriesMap, final int x) {
+			final Map<Number, XYSeries> seriesMap, final int x) {
 		final Paint p = new Paint();
 		p.setColor(Color.RED);
 		final Object[] oa = seriesMap.entrySet().toArray();
