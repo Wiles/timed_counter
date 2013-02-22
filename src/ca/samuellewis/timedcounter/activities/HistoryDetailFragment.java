@@ -73,7 +73,7 @@ public class HistoryDetailFragment extends Fragment {
 			((TextView) rootView.findViewById(R.id.tv_duration))
 					.setText(HumanTime.exactly(item.getDuration()));
 
-			((TextView) rootView.findViewById(R.id.tv_count)).setText(Integer
+			((TextView) rootView.findViewById(R.id.tv_count)).setText(Long
 					.toString(item.getCount()));
 			return rootView;
 		} else {
@@ -87,10 +87,10 @@ public class HistoryDetailFragment extends Fragment {
 			((TextView) rootView.findViewById(R.id.tv_duration))
 					.setText(HumanTime.exactly(item.getDuration()));
 
-			((TextView) rootView.findViewById(R.id.tv_count)).setText(Integer
+			((TextView) rootView.findViewById(R.id.tv_count)).setText(Long
 					.toString(item.getCount()));
 
-			final Long[] timeDifferences = new Long[item.getCount() - 1];
+			final Long[] timeDifferences = new Long[(int) (item.getCount() - 1)];
 			final long[] counts = item.getValues();
 			for (int i = 0; i < timeDifferences.length; ++i) {
 				timeDifferences[i] = counts[i + 1] - counts[i];
@@ -127,7 +127,6 @@ public class HistoryDetailFragment extends Fragment {
 			final XYSeries series1 = new SimpleXYSeries(
 					Arrays.asList(ArrayUtils.toObject(buckets)),
 					SimpleXYSeries.ArrayFormat.XY_VALS_INTERLEAVED, "");
-
 			final HistogramFormatter sf = new HistogramFormatter(Color.argb(
 					0x80, 0, 0x99, 0xcc), Color.rgb(0, 0x99, 0xcc));
 

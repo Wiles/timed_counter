@@ -11,8 +11,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/blank"
         android:gravity="center_vertical"
+        android:text="@string/blank"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -35,8 +35,9 @@
         android:gravity="right"
         android:text="@string/eights"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#606060" />
-    
+        android:textColor="#606060"
+        android:textSize="24sp" />
+
     <TextView
         android:id="@+id/tv_count"
         android:layout_width="wrap_content"
@@ -44,11 +45,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/tv_age"
-        android:gravity="right"
         android:background="#00000000"
         android:fontFamily="courier new"
+        android:gravity="right"
         android:text="@string/padded_zero"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="24sp" />
 
 </RelativeLayout>

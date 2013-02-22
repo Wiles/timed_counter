@@ -56,97 +56,138 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public Session getSession(final long id) {
-		final SQLiteDatabase db = getReadableDatabase();
-		final Cursor results = db.query(sessionTable, new String[] {
-				sessionDate, sessionDuration },
-				String.format("%s = %d", sessionId, id), null, null, null,
-				null, "1");
+		SQLiteDatabase db = null;
+		try {
 
-		final int dateIndex = results.getColumnIndex(sessionDate);
-		final int durationIndex = results.getColumnIndex(sessionDuration);
+			db = getReadableDatabase();
+			final Cursor results = db.query(sessionTable, new String[] {
+					sessionDate, sessionDuration },
+					String.format("%s = %d", sessionId, id), null, null, null,
+					null, "1");
 
-		if (results.moveToFirst()) {
+			final int dateIndex = results.getColumnIndex(sessionDate);
+			final int durationIndex = results.getColumnIndex(sessionDuration);
 
-			final DateTime date = dtf.parseDateTime(results
-					.getString(dateIndex));
-			final long duration = results.getInt(durationIndex);
-			return createSession(id, date, duration, db);
+			if (results.moveToFirst()) {
+
+				final DateTime date = dtf.parseDateTime(results
+						.getString(dateIndex));
+				final long duration = results.getInt(durationIndex);
+				return createSession(id, date, duration);
+			}
+
+			return null;
+		} finally {
+			if (db != null) {
+				db.close();
+			}
 		}
-
-		return null;
 	}
 
 	public void deleteSession(final long id) {
-		final SQLiteDatabase db = getWritableDatabase();
-		db.beginTransaction();
-		final int a = db.delete(sessionTable,
-				String.format("%s = %d", sessionId, id), null);
-		final int b = db.delete(entryTable,
-				String.format("%s = %d", entrySession, id), null);
-		System.out.println(a + b);
-		db.setTransactionSuccessful();
-		db.endTransaction();
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
+			db.beginTransaction();
+			final int a = db.delete(sessionTable,
+					String.format("%s = %d", sessionId, id), null);
+			final int b = db.delete(entryTable,
+					String.format("%s = %d", entrySession, id), null);
+			System.out.println(a + b);
+			db.setTransactionSuccessful();
+			db.endTransaction();
+		} finally {
+			if (db != null) {
+				db.close();
+			}
+		}
 	}
 
 	public Session[] getSessions() {
-		final SQLiteDatabase db = getReadableDatabase();
 
-		final Cursor results = db.query(sessionTable, new String[] { sessionId,
-				sessionDate, sessionDuration }, null, null, null, null,
-				String.format("%s desc", sessionId));
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
 
-		final Session[] ids = new Session[results.getCount()];
+			final Cursor results = db.query(sessionTable, new String[] {
+					sessionId, sessionDate, sessionDuration }, null, null,
+					null, null, String.format("%s desc", sessionId));
 
-		final int idIndex = results.getColumnIndex(sessionId);
-		final int dateIndex = results.getColumnIndex(sessionDate);
-		final int durationIndex = results.getColumnIndex(sessionDuration);
+			final Session[] ids = new Session[results.getCount()];
 
-		int i = 0;
+			final int idIndex = results.getColumnIndex(sessionId);
+			final int dateIndex = results.getColumnIndex(sessionDate);
+			final int durationIndex = results.getColumnIndex(sessionDuration);
 
-		while (results.moveToNext()) {
+			int i = 0;
 
-			final Long id = results.getLong(idIndex);
-			final DateTime date = dtf.parseDateTime(results
-					.getString(dateIndex));
-			final long duration = results.getInt(durationIndex);
-			ids[i] = createSession(id, date, duration, db);
-			++i;
+			while (results.moveToNext()) {
+
+				final Long id = results.getLong(idIndex);
+				final DateTime date = dtf.parseDateTime(results
+						.getString(dateIndex));
+				final long duration = results.getInt(durationIndex);
+				ids[i] = createSession(id, date, duration);
+				++i;
+			}
+
+			return ids;
+		} finally {
+			if (db != null) {
+				db.close();
+			}
 		}
-
-		return ids;
 	}
 
 	private Session createSession(final Long id, final DateTime date,
-			final Long duration, final SQLiteDatabase db) {
+			final Long duration) {
 		final Session session = new Session(date, duration, new ValuesSource() {
 
 			@Override
 			public long[] getValues() {
-				final Cursor valueResults = db.query(entryTable,
-						new String[] { entryValue },
-						String.format("%s = %d", entrySession, id), null, null,
-						null, entryValue);
-				final long[] values = new long[valueResults.getCount()];
 
-				final int valueIndex = valueResults.getColumnIndex(entryValue);
+				SQLiteDatabase valueDb = null;
+				try {
+					valueDb = getReadableDatabase();
+					final Cursor valueResults = valueDb.query(entryTable,
+							new String[] { entryValue },
+							String.format("%s = %d", entrySession, id), null,
+							null, null, entryValue);
+					final long[] values = new long[valueResults.getCount()];
 
-				int j = 0;
-				while (valueResults.moveToNext()) {
-					values[j] = valueResults.getLong(valueIndex);
-					++j;
+					final int valueIndex = valueResults
+							.getColumnIndex(entryValue);
+
+					int j = 0;
+					while (valueResults.moveToNext()) {
+						values[j] = valueResults.getLong(valueIndex);
+						++j;
+					}
+					return values;
+				} finally {
+					if (valueDb != null) {
+						valueDb.close();
+					}
 				}
-				return values;
 			}
 
 			@Override
 			public int getCount() {
-				final Cursor count = db.rawQuery(String.format(
-						"select count(*) as rows from %s where %s = %d",
-						entryTable, entrySession, id), null);
-				if (count.moveToFirst()) {
-					return count.getInt(count.getColumnIndex("rows"));
-				} else {
-					return 0;
+				SQLiteDatabase countDb = null;
+				try {
+					countDb = getReadableDatabase();
+					final Cursor count = countDb.rawQuery(String.format(
+							"select count(*) as rows from %s where %s = %d",
+							entryTable, entrySession, id), null);
+					if (count.moveToFirst()) {
+						return count.getInt(count.getColumnIndex("rows"));
+					} else {
+						return 0;
+					}
+				} finally {
+					if (countDb != null) {
+						countDb.close();
+					}
 				}
 			}
 		});
@@ -155,21 +196,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public Session createSession(final long duration) {
-		final DateTime now = new DateTime();
-		final SQLiteDatabase db = this.getWritableDatabase();
-		final ContentValues sessionContent = new ContentValues();
-		sessionContent.put(sessionDate, dtf.print(now));
-		sessionContent.put(sessionDuration, duration);
-		final Long rowId = db.insert(sessionTable, null, sessionContent);
+		SQLiteDatabase db = null;
+		try {
+			final DateTime now = new DateTime();
+			db = this.getWritableDatabase();
+			final ContentValues sessionContent = new ContentValues();
+			sessionContent.put(sessionDate, dtf.print(now));
+			sessionContent.put(sessionDuration, duration);
+			final Long rowId = db.insert(sessionTable, null, sessionContent);
 
-		return createSession(rowId, now, duration, getReadableDatabase());
+			return createSession(rowId, now, duration);
+
+		} finally {
+			if (db != null) {
+				db.close();
+			}
+		}
 	}
 
 	public void addEntry(final Session session, final long value) {
-		final SQLiteDatabase db = this.getWritableDatabase();
-		final ContentValues sessionValue = new ContentValues();
-		sessionValue.put(entrySession, session.getId());
-		sessionValue.put(entryValue, value);
-		db.insert(entryTable, null, sessionValue);
+		SQLiteDatabase db = null;
+		try {
+			db = this.getWritableDatabase();
+			final ContentValues sessionValue = new ContentValues();
+			sessionValue.put(entrySession, session.getId());
+			sessionValue.put(entryValue, value);
+			db.insert(entryTable, null, sessionValue);
+		} finally {
+			if (db != null) {
+				db.close();
+			}
+		}
 	}
 }
