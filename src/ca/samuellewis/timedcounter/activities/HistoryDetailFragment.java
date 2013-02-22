@@ -77,10 +77,13 @@ public class HistoryDetailFragment extends Fragment {
 					.toString(item.getCount()));
 			return rootView;
 		} else {
-
-			final View rootView = inflater.inflate(R.layout.session_stats,
-					container, false);
-
+			View rootView = null;
+			try {
+				rootView = inflater.inflate(R.layout.session_stats, container,
+						false);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 			((TextView) rootView.findViewById(R.id.tv_duration))
 					.setText(HumanTime.exactly(item.getDuration()));
 
