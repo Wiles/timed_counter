@@ -127,9 +127,10 @@ public class MainActivity extends Activity {
 			start();
 		}
 		if (running) {
-			if (session.size() < 100000) {
+			if (count < 100000) {
 				++count;
 				updateCount(count);
+				addEntry();
 			}
 		}
 	}

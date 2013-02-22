@@ -15,13 +15,14 @@ public class Session implements Serializable {
 	private static final long serialVersionUID = 4359434499804496744L;
 
 	private transient Integer count;
-	private Long id;
+	private long id;
 	private DateTime date;
-	private Long duration;
+	private long duration;
 	private transient List<Long> values;
-	private ValuesSource source;
+	private transient ValuesSource source;
 
-	final DateTimeFormatter dtf = ISODateTimeFormat.basicDateTime();
+	private final static DateTimeFormatter dtf = ISODateTimeFormat
+			.basicDateTime();
 
 	public Session(final DateTime date, final long duration) {
 		this(date, duration, new ArrayList<Long>());
