@@ -192,8 +192,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			valueDb = getReadableDatabase();
 			final Cursor valueResults = valueDb.query(ENTRY_TABLE,
 					new String[] { ENTRY_VALUE },
-					String.format("ID_IS_VALUE", ENTRY_SESSION, id), null,
-					null, null, ENTRY_VALUE);
+					String.format(ID_IS_VALUE, ENTRY_SESSION, id), null, null,
+					null, ENTRY_VALUE);
 			final long[] values = new long[valueResults.getCount()];
 
 			final int valueIndex = valueResults.getColumnIndex(ENTRY_VALUE);
