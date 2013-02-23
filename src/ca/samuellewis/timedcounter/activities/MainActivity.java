@@ -115,8 +115,12 @@ public class MainActivity extends Activity {
 		txt_count.setTypeface(face);
 		txt_count_background.setTypeface(face);
 
+		start(new Period(DateTimeConstants.MILLIS_PER_MINUTE));
+		btnReset();
+
 		if (period == null) {
-			task.updateDisplay(new Period(preferences.period().get()));
+			period = new Period(preferences.period().get());
+			task.updateDisplay(period);
 
 		} else {
 			task.updateDisplay(period);
@@ -127,7 +131,7 @@ public class MainActivity extends Activity {
 	void btnPlus() {
 		btnPlus.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 		if (!running) {
-			start();
+			start(getPeriod());
 		}
 		if (running && count <= MAX_COUNT) {
 			++count;
@@ -152,10 +156,11 @@ public class MainActivity extends Activity {
 	@LongClick
 	void btnReset() {
 		stop();
+		count = 0;
+		updateCount(0);
 		if (session != null) {
 			task.updateDisplay(new Period(session.getDuration()));
 		}
-		updateCount(0);
 		np_hours.setEnabled(true);
 		np_minutes.setEnabled(true);
 		np_seconds.setEnabled(true);
@@ -166,18 +171,18 @@ public class MainActivity extends Activity {
 				np_seconds.getValue());
 	}
 
-	private void start() {
+	private void start(final Period period) {
 
 		if (!running) {
-			if (getPeriod().getMillis() == 0) {
+			if (period.getMillis() == 0) {
 				Toast.makeText(this, R.string.no_time_entered,
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
 			running = true;
 			count = 0;
-
-			period = getPeriod();
+			updateCount(0);
+			this.period = period;
 			session = new Session(new DateTime(), period.getMillis());
 			session = new DatabaseHelper(this)
 					.createSession(period.getMillis());
