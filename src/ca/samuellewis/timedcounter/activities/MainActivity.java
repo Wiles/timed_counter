@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Duration;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +21,6 @@ import ca.samuellewis.timedcounter.R;
 import ca.samuellewis.timedcounter.config.Preferences_;
 import ca.samuellewis.timedcounter.db.DatabaseHelper;
 import ca.samuellewis.timedcounter.results.Session;
-import ca.samuellewis.timedcounter.time.Period;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Background;
@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 	private Timer timer;
 
 	@InstanceState
-	protected Period period;
+	protected long period;
 
 	@InstanceState
 	protected Session session;
@@ -115,16 +115,11 @@ public class MainActivity extends Activity {
 		txt_count.setTypeface(face);
 		txt_count_background.setTypeface(face);
 
-		start(new Period(DateTimeConstants.MILLIS_PER_MINUTE));
+		start(DateTimeConstants.MILLIS_PER_MINUTE);
 		btnReset();
 
-		if (period == null) {
-			period = new Period(preferences.period().get());
-			task.updateDisplay(period);
-
-		} else {
-			task.updateDisplay(period);
-		}
+		period = preferences.period().get();
+		task.updateDisplay(period);
 	}
 
 	@Click
@@ -138,7 +133,6 @@ public class MainActivity extends Activity {
 			updateCount(count);
 			addEntry();
 		}
-
 	}
 
 	@Background
@@ -159,22 +153,23 @@ public class MainActivity extends Activity {
 		count = 0;
 		updateCount(0);
 		if (session != null) {
-			task.updateDisplay(new Period(session.getDuration()));
+			task.updateDisplay(session.getDuration());
 		}
 		np_hours.setEnabled(true);
 		np_minutes.setEnabled(true);
 		np_seconds.setEnabled(true);
 	}
 
-	private Period getPeriod() {
-		return new Period(np_hours.getValue(), np_minutes.getValue(),
-				np_seconds.getValue());
+	private long getPeriod() {
+		return (np_hours.getValue() * DateTimeConstants.MILLIS_PER_HOUR)
+				+ (np_minutes.getValue() * DateTimeConstants.MILLIS_PER_MINUTE)
+				+ (np_seconds.getValue() * DateTimeConstants.MILLIS_PER_SECOND);
 	}
 
-	private void start(final Period period) {
+	private void start(final long period) {
 
 		if (!running) {
-			if (period.getMillis() == 0) {
+			if (period == 0) {
 				Toast.makeText(this, R.string.no_time_entered,
 						Toast.LENGTH_SHORT).show();
 				return;
@@ -183,9 +178,8 @@ public class MainActivity extends Activity {
 			count = 0;
 			updateCount(0);
 			this.period = period;
-			session = new Session(new DateTime(), period.getMillis());
-			session = new DatabaseHelper(this)
-					.createSession(period.getMillis());
+			session = new Session(new DateTime(), period);
+			session = new DatabaseHelper(this).createSession(period);
 			preferences.period().put(session.getDuration());
 			np_hours.setEnabled(false);
 			np_minutes.setEnabled(false);
@@ -199,9 +193,9 @@ public class MainActivity extends Activity {
 
 				@Override
 				public void run() {
-					period.minusSeconds(1);
-					task.updateDisplay(period);
-					if (period.isZero()) {
+					MainActivity.this.period -= DateTimeConstants.MILLIS_PER_SECOND;
+					task.updateDisplay(MainActivity.this.period);
+					if (MainActivity.this.period == 0L) {
 						stop();
 						final DatabaseHelper db = new DatabaseHelper(
 								MainActivity.this);
@@ -226,10 +220,13 @@ public class MainActivity extends Activity {
 	}
 
 	@UiThread
-	void updateDisplay(final Period period) {
-		np_hours.setValue(period.getHours());
-		np_minutes.setValue(period.getMinutes());
-		np_seconds.setValue(period.getSeconds());
+	void updateDisplay(final long period) {
+		final Duration dur = new Duration(period);
+		np_hours.setValue((int) dur.getStandardHours());
+		np_minutes
+				.setValue((int) (dur.getStandardMinutes() % DateTimeConstants.MINUTES_PER_HOUR));
+		np_seconds
+				.setValue((int) (dur.getStandardSeconds() % DateTimeConstants.SECONDS_PER_MINUTE));
 	}
 
 }

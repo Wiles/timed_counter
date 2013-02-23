@@ -2,8 +2,6 @@ package ca.samuellewis.timedcounter.activities;
 
 import java.util.Timer;
 
-import ca.samuellewis.timedcounter.time.Period;
-
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
@@ -19,7 +17,7 @@ public class BackgroundTask {
 	private Timer timer = new Timer(true);
 
 	@Background
-	void updateDisplay(final Period period) {
+	void updateDisplay(final long period) {
 		activity.updateDisplay(period);
 	}
 
