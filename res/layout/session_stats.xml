@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_duration"
                 android:layout_toLeftOf="@+id/strut"
-                android:text="@string/ticks"
+                android:text="@string/count"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView

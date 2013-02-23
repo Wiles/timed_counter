@@ -61,6 +61,7 @@ public class HistoryDetailFragment extends Fragment {
 	@Override
 	public View onCreateView(final LayoutInflater inflater,
 			final ViewGroup container, final Bundle savedInstanceState) {
+		// TODO clean this up
 		if (item == null || item.getCount() <= 0) {
 			final View rootView = inflater.inflate(
 					R.layout.fragment_history_detail, container, false);
@@ -98,8 +99,12 @@ public class HistoryDetailFragment extends Fragment {
 
 			final double min = timeDifferences[0];
 			final double max = timeDifferences[timeDifferences.length - 1];
-			final double range = max - min;
-
+			double range;
+			if (min == max) {
+				range = 1;
+			} else {
+				range = max - min;
+			}
 			final double bucketSize = range / BUCKET_COUNT;
 			final long[] buckets = new long[BUCKET_COUNT * 2 + 2];
 			int bucket = 0;
@@ -127,6 +132,11 @@ public class HistoryDetailFragment extends Fragment {
 					SimpleXYSeries.ArrayFormat.XY_VALS_INTERLEAVED, "");
 			final HistogramFormatter sf = new HistogramFormatter(Color.argb(
 					0x80, 0, 0x99, 0xcc), Color.rgb(0, 0x99, 0xcc));
+
+			plot.setTitle(getString(R.string.distribution));
+			plot.setDomainLabel(getString(R.string.time));
+			plot.setRangeLabel(getString(R.string.count_label));
+			plot.getLegendWidget().setVisible(false);
 
 			plot.addSeries(series1, sf);
 

@@ -27,6 +27,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	static final String ENTRY_SESSION = "sessionId";
 	static final String ENTRY_VALUE = "value";
 
+	static final String ID_IS_VALUE = "%s = %d";
+
 	static final int DATABASE_VERSION = 1;
 
 	private static final DateTimeFormatter DTF = ISODateTimeFormat
@@ -70,8 +72,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db = getReadableDatabase();
 			final Cursor results = db.query(SESSION_TABLE, new String[] {
 					SESSION_DATE, SESSION_DURATION },
-					String.format("%s = %d", SESSION_ID, id), null, null, null,
-					null, "1");
+					String.format(ID_IS_VALUE, SESSION_ID, id), null, null,
+					null, null, "1");
 
 			final int dateIndex = results.getColumnIndex(SESSION_DATE);
 			final int durationIndex = results.getColumnIndex(SESSION_DURATION);
@@ -97,10 +99,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		try {
 			db = getWritableDatabase();
 			db.beginTransaction();
-			db.delete(SESSION_TABLE, String.format("%s = %d", SESSION_ID, id),
-					null);
-			db.delete(ENTRY_TABLE, String.format("%s = %d", ENTRY_SESSION, id),
-					null);
+			db.delete(SESSION_TABLE,
+					String.format(ID_IS_VALUE, SESSION_ID, id), null);
+			db.delete(ENTRY_TABLE,
+					String.format(ID_IS_VALUE, ENTRY_SESSION, id), null);
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		} finally {
@@ -138,7 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			final ContentValues cv = new ContentValues();
 			cv.put(SESSION_FINISHED, true);
 			db.update(SESSION_TABLE, cv,
-					String.format("%s = %d", SESSION_ID, id), null);
+					String.format(ID_IS_VALUE, SESSION_ID, id), null);
 		} finally {
 			if (db != null) {
 				db.close();
@@ -190,8 +192,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			valueDb = getReadableDatabase();
 			final Cursor valueResults = valueDb.query(ENTRY_TABLE,
 					new String[] { ENTRY_VALUE },
-					String.format("%s = %d", ENTRY_SESSION, id), null, null,
-					null, ENTRY_VALUE);
+					String.format("ID_IS_VALUE", ENTRY_SESSION, id), null,
+					null, null, ENTRY_VALUE);
 			final long[] values = new long[valueResults.getCount()];
 
 			final int valueIndex = valueResults.getColumnIndex(ENTRY_VALUE);

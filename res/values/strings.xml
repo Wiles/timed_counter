@@ -28,7 +28,8 @@
     <string name="title_history_list">Sessions</string>
     <string name="blank"></string>
     <string name="nothing_found">Nothing found</string>
-    <string name="ticks">Ticks:</string>
+    <string name="count">Count:</string>
+    <string name="count_label">Count</string>
     <string name="average_time_between">Average Time Between:</string>
     <string name="longest_time_between">Longest Time Between:</string>
     <string name="shortest_time_between">Shortest Time Between:</string>

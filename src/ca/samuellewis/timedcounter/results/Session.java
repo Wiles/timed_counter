@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 public class Session implements Serializable {
 
@@ -20,9 +18,6 @@ public class Session implements Serializable {
 	private long duration;
 	private transient List<Long> values;
 	private transient ValuesSource source;
-
-	private static final DateTimeFormatter DTF = ISODateTimeFormat
-			.basicDateTime();
 
 	public Session(final DateTime date, final long duration) {
 		this(date, duration, new ArrayList<Long>());
@@ -68,11 +63,6 @@ public class Session implements Serializable {
 
 	public void addValue(final long value) {
 		values.add(value);
-	}
-
-	@Override
-	public String toString() {
-		return DTF.print(date);
 	}
 
 	public void setId(final long id) {
