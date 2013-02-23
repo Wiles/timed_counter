@@ -198,6 +198,10 @@ public class MainActivity extends Activity {
 					task.updateDisplay(period);
 					if (period.isZero()) {
 						stop();
+						final DatabaseHelper db = new DatabaseHelper(
+								MainActivity.this);
+						db.finishSession(session.getId());
+						db.removeUnfinished();
 						menuHistory();
 					}
 				}

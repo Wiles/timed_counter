@@ -29,8 +29,7 @@
         </activity>
         <activity
             android:name="ca.samuellewis.timedcounter.activities.HistoryDetailActivity"
-            android:label="@string/title_history_detail"
-            android:parentActivityName=".HistoryListActivity" >
+            android:label="@string/title_history_detail" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HistoryListActivity" />

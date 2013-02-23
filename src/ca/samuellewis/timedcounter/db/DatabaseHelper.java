@@ -20,13 +20,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	static final String SESSION_ID = "id";
 	static final String SESSION_DATE = "date";
 	static final String SESSION_DURATION = "duration";
+	static final String SESSION_FINISHED = "FINISHED";
 
 	static final String ENTRY_TABLE = "entry";
 	static final String ENTRY_ID = "id";
 	static final String ENTRY_SESSION = "sessionId";
 	static final String ENTRY_VALUE = "value";
 
-	static final int DATABASE_VERSION = 3;
+	static final int DATABASE_VERSION = 1;
 
 	private static final DateTimeFormatter DTF = ISODateTimeFormat
 			.basicDateTime();
@@ -39,8 +40,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(final SQLiteDatabase db) {
 		String query = String.format("CREATE TABLE %s ( "
 				+ "%s INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ "%s TEXT NOT NULL, " + "%s INTEGER NOT NULL);",
-				SESSION_TABLE, SESSION_ID, SESSION_DATE, SESSION_DURATION);
+				+ "%s TEXT NOT NULL, " + "%s INTEGER NOT NULL, %s INTEGER);",
+				SESSION_TABLE, SESSION_ID, SESSION_DATE, SESSION_DURATION,
+				SESSION_FINISHED);
 		db.execSQL(query);
 		query = String
 				.format("CREATE TABLE %s ("
@@ -108,6 +110,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	public void removeUnfinished() {
+
+		SQLiteDatabase db = null;
+		try {
+			db = getReadableDatabase();
+			final Cursor results = db.query(SESSION_TABLE,
+					new String[] { SESSION_FINISHED },
+					String.format("%s = 0", SESSION_FINISHED), null, null,
+					null, String.format("%s desc", SESSION_ID));
+			final int finishedIndex = results.getColumnIndex(SESSION_FINISHED);
+			while (results.moveToNext()) {
+				deleteSession(results.getLong(finishedIndex));
+			}
+		} finally {
+			if (db != null) {
+				db.close();
+			}
+		}
+	}
+
+	public void finishSession(final long id) {
+
+		SQLiteDatabase db = null;
+		try {
+			db = getReadableDatabase();
+			final ContentValues cv = new ContentValues();
+			cv.put(SESSION_FINISHED, true);
+			db.update(SESSION_TABLE, cv,
+					String.format("%s = %d", SESSION_ID, id), null);
+		} finally {
+			if (db != null) {
+				db.close();
+			}
+		}
+	}
+
 	public Session[] getSessions() {
 
 		SQLiteDatabase db = null;
@@ -115,8 +153,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db = getWritableDatabase();
 
 			final Cursor results = db.query(SESSION_TABLE, new String[] {
-					SESSION_ID, SESSION_DATE, SESSION_DURATION }, null, null,
-					null, null, String.format("%s desc", SESSION_ID));
+					SESSION_ID, SESSION_DATE, SESSION_DURATION },
+					String.format("%s = 1", SESSION_FINISHED), null, null,
+					null, String.format("%s desc", SESSION_ID));
 
 			final Session[] ids = new Session[results.getCount()];
 
@@ -215,6 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			final ContentValues sessionContent = new ContentValues();
 			sessionContent.put(SESSION_DATE, DTF.print(now));
 			sessionContent.put(SESSION_DURATION, duration);
+			sessionContent.put(SESSION_FINISHED, false);
 			final Long rowId = db.insert(SESSION_TABLE, null, sessionContent);
 
 			return createSession(rowId, now, duration);
