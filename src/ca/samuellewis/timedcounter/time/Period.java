@@ -27,7 +27,7 @@ public class Period implements Serializable {
 		this.seconds = (int) (millis / DateTimeConstants.MILLIS_PER_SECOND % DateTimeConstants.SECONDS_PER_MINUTE);
 		this.minutes = (int) (millis
 				/ (DateTimeConstants.MILLIS_PER_SECOND * DateTimeConstants.SECONDS_PER_MINUTE) % DateTimeConstants.SECONDS_PER_MINUTE);
-		this.hours = (int) (millis / DateTimeConstants.SECONDS_PER_HOUR);
+		this.hours = (int) (millis / DateTimeConstants.MILLIS_PER_HOUR);
 	}
 
 	public boolean isZero() {
