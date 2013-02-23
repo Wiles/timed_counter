@@ -18,6 +18,7 @@ import ca.samuellewis.timedcounter.results.Session;
 import ca.samuellewis.timedcounter.results.Stats;
 
 import com.androidplot.series.XYSeries;
+import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.eaio.util.text.HumanTime;
@@ -139,6 +140,7 @@ public class HistoryDetailFragment extends Fragment {
 			plot.getLegendWidget().setVisible(false);
 
 			plot.addSeries(series1, sf);
+			plot.setRangeLowerBoundary(0, BoundaryMode.FIXED);
 
 			((TextView) rootView.findViewById(R.id.tv_longest))
 					.setText(HumanTime.exactly((long) max));
