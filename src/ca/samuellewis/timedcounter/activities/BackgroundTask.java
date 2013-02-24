@@ -8,21 +8,13 @@ import com.googlecode.androidannotations.annotations.RootContext;
 
 @EBean
 public class BackgroundTask {
-
 	@RootContext
 	protected MainActivity activity;
-
-	private boolean saving;
-
 	private Timer timer = new Timer(true);
 
 	@Background
 	void updateDisplay(final long period) {
 		activity.updateDisplay(period);
-	}
-
-	public boolean isSaving() {
-		return saving;
 	}
 
 	public Timer getTimer() {

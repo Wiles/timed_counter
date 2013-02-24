@@ -41,7 +41,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/txt_count"
-        android:text="@string/ince" />
+        android:text="@string/ince"
+        android:textSize="100sp" />
 
     <TextView
         android:id="@+id/txt_count_background"

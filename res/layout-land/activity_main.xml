@@ -112,7 +112,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="@string/ince" >
+        android:text="@string/ince"
+        android:textSize="100sp" >
 
         <requestFocus />
     </Button>
